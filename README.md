@@ -42,19 +42,26 @@ nextjs-docker-k8s/
 
 ---
 
-## ⚙️ Step-by-Step Setup
 
-### 1. Clone the Repository
+---
+
+## ⚙️ Setup and Deployment Guide
+
+### 🏗️ 1. Clone the Repository
 
 ```bash
 git clone https://github.com/iam-vinod/nextjs-docker-k8s.git
 cd nextjs-docker-k8s
+
 
 2. Build & Push the Docker Image to GHCR
 
 docker build -t ghcr.io/iam-vinod/my-nextjs-app:latest .
 echo "<YOUR_GITHUB_PAT>" | docker login ghcr.io -u iam-vinod --password-stdin
 docker push ghcr.io/iam-vinod/my-nextjs-app:latest
+
+✅ Image Link:
+ghcr.io/iam-vinod/my-nextjs-app:latest
 
 3. Start Minikube
 
@@ -73,13 +80,39 @@ kubectl logs -l app=nextjs
 
 6. Access the Application
 
-If using Minikube on EC2, access via NodePort:
+Option 1: Using NodePort
 
-curl ifconfig.me  # Get your EC2 Public IP
+Find your EC2 Public IP:
 
-Then open in browser:
+curl ifconfig.me
+
+Then open:
 
 http://<EC2_PUBLIC_IP>:30080
+
+Example:
+
+http://34.233.121.66:30080
+
+Option 2: Using Port Forwarding
+
+kubectl port-forward svc/nextjs-service 6000:3000 --address=0.0.0.0
+
+Then visit:
+
+http://<EC2_PUBLIC_IP>:6000
+
+🧠 CI/CD Workflow Overview (GitHub Actions)
+
+The workflow file .github/workflows/ci-cd.yml performs:
+
+Build Next.js app
+
+Build and push Docker image to GHCR
+
+Tag image as latest and with commit SHA
+
+Run only on push to main branch
 
 🚀 Deployment Summary
 
