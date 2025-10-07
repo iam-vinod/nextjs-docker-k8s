@@ -18,14 +18,24 @@ This project demonstrates how to containerize a **Next.js application** using Do
 
 ```
 nextjs-docker-k8s/
-├── Dockerfile
-├── deployment.yaml
-├── service.yaml
-├── next.config.js
+├── .github/
+│ └── workflows/
+│ └── ci-cd.yml # GitHub Actions workflow file
+│
+├── app/ # Next.js app source code
+├── k8s/
+│ ├── deployment.yaml # Kubernetes Deployment
+│ └── service.yaml # Kubernetes Service
+│
+├── public/ # Static assets
+├── .gitignore
+├── Dockerfile # Docker image build configuration
+├── README.md
+├── next.config.ts
 ├── package.json
-├── public/
-├── pages/
-└── README.md
+├── package-lock.json
+├── postcss.config.mjs
+└── tsconfig.json
 
 ```
 
