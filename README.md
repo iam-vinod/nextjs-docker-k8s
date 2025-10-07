@@ -1,36 +1,90 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js App Deployment on Kubernetes using Docker and Minikube
 
-## Getting Started
+This project demonstrates how to containerize a **Next.js application** using Docker and deploy it to a **Kubernetes cluster** running on **Minikube** inside an **AWS EC2 instance**.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 🧰 Tools & Technologies Used
+
+- **AWS EC2 (Ubuntu)**
+- **Docker**
+- **GitHub Container Registry (GHCR)**
+- **Kubernetes (Minikube)**
+- **kubectl**
+
+---
+
+## 📁 Project Structure
+
+```
+nextjs-docker-k8s/
+├── Dockerfile
+├── deployment.yaml
+├── service.yaml
+├── next.config.js
+├── package.json
+├── public/
+├── pages/
+└── README.md
+
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## ⚙️ Step-by-Step Setup
 
-## Learn More
+### 1. Clone the Repository
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+git clone https://github.com/iam-vinod/nextjs-docker-k8s.git
+cd nextjs-docker-k8s
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. Build & Push the Docker Image to GHCR
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+docker build -t ghcr.io/iam-vinod/my-nextjs-app:latest .
+echo "<YOUR_GITHUB_PAT>" | docker login ghcr.io -u iam-vinod --password-stdin
+docker push ghcr.io/iam-vinod/my-nextjs-app:latest
 
-## Deploy on Vercel
+3. Start Minikube
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+minikube start
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4. Deploy to Kubernetes
+
+kubectl apply -f deployment.yaml
+kubectl apply -f service.yaml
+
+5. Verify Deployment
+
+kubectl get pods
+kubectl get svc
+kubectl logs -l app=nextjs
+
+6. Access the Application
+
+If using Minikube on EC2, access via NodePort:
+
+curl ifconfig.me  # Get your EC2 Public IP
+
+Then open in browser:
+
+http://<EC2_PUBLIC_IP>:30080
+
+🚀 Deployment Summary
+
+| Component        | Description                              |
+| ---------------- | ---------------------------------------- |
+| **App Name**     | Next.js App                              |
+| **Image**        | `ghcr.io/iam-vinod/my-nextjs-app:latest` |
+| **Cluster**      | Minikube on AWS EC2                      |
+| **Service Type** | NodePort (30080 → 3000)                  |
+| **Pods**         | 2 replicas                               |
+| **Access URL**   | `http://<EC2_PUBLIC_IP>:3000`           |
+
+📸 Logs Snapshot
+
+▲ Next.js 15.5.4
+- Local:    http://localhost:3000
+✓ Ready in 1242ms
+
